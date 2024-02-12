@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  web:
+    image: flask_app:1
+    ports:
+      - "5000"
+    networks:
+      - web
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
