@@ -1,9 +1,7 @@
 name: Deploy Website
 
 on:
-  push:
-    branches:
-      - main  # Set this to the branch you want to deploy from
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -12,6 +10,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Scan and add host key
+      run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
@@ -19,6 +20,6 @@ jobs:
 
     - name: Deploy to VM
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
           ls -al
         EOF
